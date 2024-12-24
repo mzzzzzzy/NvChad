@@ -4,14 +4,12 @@ local M = {}
 M.treesitter = {
   ensure_installed = {
     "c",
-    "css",
+    -- "css",
     "go",
     "gomod",
     "gowork",
     "graphql",
     "html",
-    "java",
-    "javascript",
     "json",
     "lua",
     "markdown",
@@ -38,11 +36,16 @@ M.mason = {
     "delve",
     "gopls",
     "goimports",
+    "gofumpt",
     "golangci-lint",
     "golines",
 
     --java
-    "jdtls",
+    --"jdtls",
+
+    -- prettier
+    "prettier",
+    "prettierd",
 
     -- other
     "yaml-language-server",

@@ -1,7 +1,35 @@
-local overrides = require "custom.configs.overrides"
+local overrides = require "configs.overrides"
 
----@type NvPluginSpec[]
-local plugins = {
+return {
+  {
+    "stevearc/conform.nvim",
+    -- event = 'BufWritePre', -- uncomment for format on save
+    opts = require "configs.conform",
+  },
+
+  -- These are some examples, uncomment them if you want to see them work!
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = {
+      -- format & linting
+      {
+        "mhartington/formatter.nvim",
+        config = function()
+          require "configs.formatter"
+        end,
+      },
+      {
+        "mfussenegger/nvim-lint",
+        config = function()
+          require "configs.nvim-lint"
+        end,
+      },
+    },
+    config = function()
+      require "configs.lspconfig"
+    end,
+  },
+
   {
     "rcarriga/nvim-notify",
     lazy = false,
@@ -26,54 +54,19 @@ local plugins = {
       --      vim.notify = require "notify"
     end,
   },
+
+  -- Neovim plugin for a code outline window
   {
     "stevearc/aerial.nvim",
     opts = {},
-    cmd = { "AerialToggle" },
-    config = function()
-      require("aerial").setup {}
-    end,
     -- Optional dependencies
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "nvim-tree/nvim-web-devicons",
     },
   },
-  -- Override plugin definition options
 
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      -- format & linting
-      {
-        "mhartington/formatter.nvim",
-        config = function()
-          require "custom.configs.formatter"
-        end,
-      },
-      {
-        "mfussenegger/nvim-lint",
-        config = function()
-          require "custom.configs.nvim-lint"
-        end,
-      },
-      -- {
-      --   "nzlov/nvim-lsp-notify",
-      --   config = function()
-      --     require("lsp-notify").setup {
-      --       -- notify = require "notify",
-      --       excludes = { "null-ls" },
-      --     }
-      --   end,
-      -- },
-    },
-
-    config = function()
-      require "plugins.configs.lspconfig"
-      require "custom.configs.lspconfig"
-    end,
-  },
-
+  -- A completion plugin for neovim coded in Lua
   {
     "hrsh7th/nvim-cmp",
     opts = overrides.cmp,
@@ -99,35 +92,30 @@ local plugins = {
           require("codeium").setup {}
         end,
       },
-      -- {
-      --   "nzlov/cmp-fauxpilot",
-      --   config = function()
-      --     require("cmp_fauxpilot.config"):setup {
-      --       host = "http://192.168.1.109:5000",
-      --       n = 2,
-      --     }
-      --   end,
-      -- },
-      -- {
-      --   "nzlov/cmp-tabby",
-      --   config = function()
-      --     require("cmp_tabby.config"):setup {
-      --       host = "http://localhost:6080",
-      --     }
-      --   end,
-      -- },
     },
   },
 
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    config = function()
+      require "configs.indent-blankline"
+    end,
+  },
   {
     "folke/which-key.nvim",
     enabled = true,
     event = "VimEnter",
     keys = {},
     config = function()
-      require "custom.configs.whichkey"
+      require "configs.whichkey"
     end,
   },
+
+  {
+    "echasnovski/mini.icons",
+    version = "*",
+  },
+
   -- overrde plugin configs
   {
     "nvim-treesitter/nvim-treesitter",
@@ -144,10 +132,6 @@ local plugins = {
     opts = overrides.nvimtree,
   },
 
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    opts = overrides.indentblankline,
-  },
   {
     "nvim-telescope/telescope.nvim",
     opts = overrides.telescope,
@@ -188,6 +172,7 @@ local plugins = {
       require("hop").setup()
     end,
   },
+
   -- Debugging
   {
     "mfussenegger/nvim-dap",
@@ -227,40 +212,6 @@ local plugins = {
     end,
   },
 
-  -- To make a plugin not be loaded
-  -- {
-  --   "NvChad/nvim-colorizer.lua",
-  --   enabled = true,
-  -- },
-
-  -- Uncomment if you want to re-enable which-key
-  -- {
-  --   "folke/which-key.nvim",
-  --   enabled = true,
-  -- },
-  -- {
-  --   "nvim-java/nvim-java",
-  --   ft = "java",
-  --   dependencies = {
-  --     "nvim-java/lua-async-await",
-  --     "nvim-java/nvim-java-core",
-  --     "nvim-java/nvim-java-test",
-  --     "nvim-java/nvim-java-dap",
-  --     "MunifTanjim/nui.nvim",
-  --     "neovim/nvim-lspconfig",
-  --     "mfussenegger/nvim-dap",
-  --   },
-  --   config = function()
-  --     require "custom.ftplugin.njava"
-  --   end,
-  -- },
-  {
-    "mfussenegger/nvim-jdtls",
-    ft = "java",
-    config = function()
-      require "custom.ftplugin.java"
-    end,
-  },
   {
     "tpope/vim-fugitive",
     cmd = { "Git" },
@@ -290,48 +241,4 @@ local plugins = {
       }
     end,
   },
-  {
-    "jackMort/ChatGPT.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("chatgpt").setup {
-        openai_params = {
-          model = "default-model",
-          frequency_penalty = 0,
-          presence_penalty = 0,
-          max_tokens = 3000,
-          temperature = 0.8,
-          top_p = 0.8,
-          n = 1,
-        },
-        openai_edit_params = {
-          model = "default-model",
-          frequency_penalty = 0,
-          presence_penalty = 0,
-          max_tokens = 3000,
-          temperature = 0.8,
-          top_p = 0.8,
-          n = 1,
-        },
-        show_quickfixes_cmd = "Telescope quickfix",
-        actions_paths = {
-          "~/.config/nvim/lua/custom/actions.json",
-        },
-      }
-    end,
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
-  },
-  {
-    "akinsho/flutter-tools.nvim",
-    ft = "dart",
-    config = function()
-      require "custom.ftplugin.dart"
-    end,
-  },
 }
-
-return plugins
